@@ -13,7 +13,7 @@
 ## 🔗 Live Demos & Links
 
 - **📱 Android App (APK Download):** *(Coming Soon)*
-- **⚙️ Live Backend API:** *(Will be deployed tonight)*
+- **⚙️ Live Backend API:** [https://ppg-backend-8kc7.onrender.com](https://ppg-backend-8kc7.onrender.com)
 - **🧠 Training Notebooks:** [View Jupyter Notebooks](./notebooks/)
 
 ---
