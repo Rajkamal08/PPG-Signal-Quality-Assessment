@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Since you are connected via USB, we will use localhost and ADB reverse to bypass Windows Firewall
-const API_URL = 'http://127.0.0.1:8000/predict';
+// Connect to the live production server on Render
+const API_URL = 'https://ppg-backend-8kc7.onrender.com/predict';
 
 export const predictSignalQuality = async (signalArray, fs = 30) => {
   try {
