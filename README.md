@@ -1,92 +1,186 @@
-# 🫀 Smartphone-based PPG Signal Quality Assessment
+ 🫀 PPG-Signal-Quality-Assessment
 
-An end-to-end Machine Learning pipeline and mobile application designed to acquire, filter, and grade Photoplethysmography (PPG) signals in real-time using only a smartphone camera and flash. 
+> **Smartphone-based Photoplethysmography (PPG) signal acquisition, filtering, and quality grading using clinical Machine Learning.**
 
-This project bridges the gap between raw optical hardware sensors and clinical-grade signal processing, providing a **Signal Quality Index (SQI)** score to determine if a captured heartbeat waveform is valid for downstream health metric analysis (like Heart Rate Variability, SpO2, or Blood Pressure estimation).
-
----
-
-## 🚀 Project Complexity & Architecture
-**Difficulty Level:** Advanced (Full-Stack Machine Learning + Native Mobile Hardware Integration)
-
-This project spans three distinct engineering domains:
-1. **Native Hardware Interfacing (Kotlin/Android):** Bypassing standard React Native camera limitations to extract raw frame brightness intensity at ~30 FPS to construct a raw optical signal.
-2. **Digital Signal Processing (DSP):** Applying 4th-order Butterworth bandpass filters (0.5Hz - 4.0Hz) to remove baseline wander (respiration) and high-frequency noise (ambient light variations).
-3. **Machine Learning (Python/Scikit-Learn):** Extracting statistical time-domain features and classifying the signal using an optimized Random Forest model trained on the clinical BUT-PPG dataset.
+[![Frontend](https://img.shields.io/badge/Mobile-React%20Native-61DAFB)](https://reactnative.dev)
+[![Native Hardware](https://img.shields.io/badge/Hardware-Kotlin-purple)](https://kotlinlang.org/)
+[![Backend](https://img.shields.io/badge/Backend-FastAPI-009688)](https://fastapi.tiangolo.com/)
+[![Machine Learning](https://img.shields.io/badge/ML-Scikit--Learn-F7931E)](https://scikit-learn.org/)
+[![DSP](https://img.shields.io/badge/DSP-SciPy-blue)](https://scipy.org/)
 
 ---
 
-## 🛠️ Technology Stack
+## 🔗 Live Demos & Links
 
-### Mobile Application (Frontend)
-- **Framework:** React Native (0.74+)
-- **Hardware Integration:** Custom Android Native Modules (Kotlin) for raw frame extraction.
-- **Camera API:** `react-native-vision-camera`
-- **UI/UX:** Dark-mode optimized, dynamic theming via React Context, and hardware-accelerated SVG charts (`react-native-svg`).
-
-### Machine Learning & DSP (Backend)
-- **Server:** FastAPI (Python) for ultra-fast, lightweight inference.
-- **Model:** Random Forest Classifier (achieving robust accuracy on noisy edge-case data).
-- **Signal Processing:** `SciPy`, `NumPy`, `Pandas` for Butterworth filtering and peak detection.
-- **Features Extracted:** 
-  - **Kurtosis & Skewness** (Measuring the morphological shape of the systolic peak)
-  - **Zero-Crossing Rate (ZCR)** (Detecting high-frequency motion artifacts)
-  - **Signal-to-Noise Ratio (SNR)** (Frequency-domain power analysis)
+- **📱 Android App (APK Download):** *(Coming Soon)*
+- **⚙️ Live Backend API:** *(Will be deployed tonight)*
+- **🧠 Training Notebooks:** [View Jupyter Notebooks](./notebooks/)
 
 ---
 
-## 📈 System Workflow
+## 📱 What is this project?
 
-1. **Acquisition:** The user places their finger over the smartphone camera and flash. The Kotlin Native Module records the average red-channel intensity of every frame for 10 seconds.
-2. **Transmission:** The raw array of floating-point values and the exact sampling rate (`fs`) are transmitted to the FastAPI backend.
-3. **Filtering:** The backend applies a bandpass filter to isolate the 0.5 - 4.0 Hz frequency band (equivalent to 30 - 240 BPM).
-4. **Feature Extraction:** Statistical features are calculated from the cleaned waveform.
-5. **Classification:** The Random Forest model grades the signal as `Good`, `Moderate`, or `Poor`, and assigns an out-of-100 **SQI Score** based on classification probability.
-6. **Visualization:** The mobile app draws the true filtered waveform in real-time using SVG paths and presents a clinical dashboard.
+This project bridges the gap between raw smartphone hardware sensors and clinical-grade signal processing. A user places their finger over the smartphone camera and flash, and the app:
+
+1. **Extracts raw optical frames** using custom Kotlin Native Modules at ~30 FPS.
+2. Transmits the raw signal to a **FastAPI backend**.
+3. Applies a **4th-order Butterworth bandpass filter** to remove noise and respiratory baseline wander.
+4. Extracts statistical features (Kurtosis, Skewness, ZCR, SNR) and runs them through a **Random Forest model**.
+5. Returns a **Signal Quality Index (SQI)** score (0-100) and plots the exact filtered heartbeat waveform live on a gorgeous Dark Mode dashboard.
 
 ---
 
-## ⚙️ How to Run Locally
+## 🏗️ Architecture
 
-### 1. Start the Backend API
+```text
+┌─────────────────────────────────────────────────────┐
+│              React Native Mobile App                 │
+│  Home → Instructions → 10s Measurement Countdown    │
+│  Custom Kotlin Module extracts Red Channel intensity│
+│  Smooth Animations · Custom UI · Dynamic Theming    │
+└──────────────────────┬──────────────────────────────┘
+                       │ HTTP POST (Raw Signal Array)
+┌──────────────────────▼──────────────────────────────┐
+│         FastAPI Backend (Python)                     │
+│                                                      │
+│  /predict → Signal Quality Assessment Pipeline      │
+└──────────────────────┬──────────────────────────────┘
+                       │
+┌──────────────────────▼──────────────────────────────┐
+│           DSP & Machine Learning Engine              │
+│  1. Butterworth Bandpass Filter (0.5Hz - 4.0Hz)     │
+│  2. Feature Extraction (SciPy/NumPy/Pandas)         │
+│  3. Random Forest Classifier (Scikit-Learn)         │
+└─────────────────────────────────────────────────────┘
+```
+
+---
+
+## ✅ Features
+
+### 📸 Native Hardware Integration
+- **Direct Camera Access** — Bypasses standard React Native camera limitations using a custom Kotlin bridge to extract raw frame brightness intensity.
+- **Hardware Flash Control** — Illuminates the capillary bed dynamically during the 10-second scan.
+
+### 🧠 Clinical Machine Learning Pipeline
+- **Optimized Random Forest** — Trained on the clinical [BUT-PPG database](https://physionet.org/content/but-ppg/2.0.0/).
+- **4 Feature Dimensions** — Evaluates the morphological shape (Kurtosis/Skewness), high-frequency motion artifacts (ZCR), and spectral power (SNR).
+- **Dynamic SQI Score** — Returns an out-of-100 Signal Quality Index based on classification confidence probabilities.
+
+### 📊 Premium UI/UX & Live Visualization
+- **Live SVG Rendering** — Dynamically maps the actual returned floating-point signal array to an SVG path to render the user's *true* heartbeat waveform.
+- **Global Theme Engine** — Instant Light/Dark mode toggling using a custom React Context provider.
+- **Custom Modals** — Replaced native alerts with beautiful, blurred-overlay modal popups for a high-end feel.
+
+---
+
+## 🖥️ App Screens
+
+| Screen | Description |
+|--------|-------------|
+| `HomeScreen` | Dashboard with app overview and dynamic Light/Dark toggle |
+| `CameraScreen` | Instructions, live countdown, and custom recording UI |
+| `AnalysisScreen` | Animated transition state showing the pipeline steps |
+| `ResultScreen` | Final dashboard featuring the true SVG wave, SQI gauge, and metrics |
+
+---
+
+## 🔌 API Reference
+
+### Prediction
+```
+POST /predict      { signal: [float], fs: float }   → Returns { quality, sqi, confidence, features }
+GET  /             (Health Check)                   → Returns { status: "API is running" }
+```
+
+---
+
+## 🚀 Deployment (Planned for Tonight)
+
+### Backend (Render / Railway)
+- **Framework:** Uvicorn + FastAPI
+- Auto-deploys from `main` branch
+
+### Mobile App
+- Android APK release build targeting API 34.
+
+---
+
+## 🛠️ Local Development
+
+### Backend
 ```bash
 # Navigate to project root
 cd PPG-IIIT
 
-# Install Python dependencies
+# Install dependencies
 pip install -r requirements.txt
 
-# Start the FastAPI server on port 8000
+# Run the server on port 8000
 cd backend
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-### 2. Run the Mobile App
-Because this project uses custom Kotlin Native Modules, it **cannot** be run via Expo Go. You must compile the native Android code.
+### Mobile App
+Because this project uses custom Kotlin Native Modules, it **cannot** be run via Expo Go.
 
 ```bash
-# Forward the backend port to your Android device
-adb reverse tcp:8000 tcp:8000
-
-# Navigate to the mobile directory
 cd mobile
-
-# Install Node dependencies
 npm install
 
-# Build and deploy the Android app
+# Connect Android device via USB and forward the port:
+adb reverse tcp:8000 tcp:8000
+
+# Build and run natively
 npx react-native run-android
 ```
 
 ---
 
-## 📸 Screenshots
-*(To do: Add screenshots of the beautiful Dark Mode Camera Screen, the Analysis loader, and the final Dashboard UI here)*
+## 📁 Project Structure
+
+```text
+PPG-IIIT/
+├── backend/
+│   └── main.py                 # FastAPI server and prediction endpoint
+├── mobile/                     # React Native application
+│   ├── android/                # Native Android code (Kotlin PPGModule)
+│   └── src/
+│       ├── components/         # Reusable UI components
+│       ├── context/            # ThemeProvider (Light/Dark mode)
+│       ├── screens/            # Home, Camera, Analysis, Result screens
+│       └── services/           # api.js (Axios connection to backend)
+├── models/
+│   └── rf_model.pkl            # Trained Random Forest classifier
+├── notebooks/                  # Jupyter notebooks for data science pipeline
+│   ├── 01_Load_Dataset.ipynb   # Raw data parsing
+│   ├── 03_Preprocessing.ipynb  # DSP filtering
+│   ├── 04_Feature_Extraction.ipynb
+│   └── 06_SQI_Model_Training.ipynb
+├── src/                        # Python modules for the ML pipeline
+│   ├── data_loader.py
+│   ├── feature_extraction_v2.py
+│   ├── preprocessing.py
+│   └── visualization.py
+└── requirements.txt            # Python dependencies
+```
 
 ---
 
-## 🧠 Dataset & Training
-The ML model was trained using the [Brno University of Technology Smartphone PPG Database (BUT-PPG)](https://physionet.org/content/but-ppg/2.0.0/). The raw signals were preprocessed, segmented into 10-second windows, and manually labeled for signal quality before feature extraction and training.
+## 🔑 Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Mobile App | React Native 0.74 |
+| Hardware Bridge | Kotlin (Android Native Modules) |
+| Backend | Python + FastAPI |
+| Machine Learning | Scikit-Learn (Random Forest) |
+| Digital Signal Processing | SciPy, NumPy, Pandas |
+| Charts & UI | react-native-svg, LinearGradients |
+| Persistence | AsyncStorage |
 
 ---
-*Developed as a Final Year Academic Project.*
+
+## 👨‍💻 Built For
+
+Developed as a Final Year Academic Project to demonstrate a full-stack integration of mobile hardware, digital signal processing, and machine learning for non-invasive cardiovascular health monitoring.
