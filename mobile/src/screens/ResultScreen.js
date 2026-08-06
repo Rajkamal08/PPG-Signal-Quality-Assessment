@@ -143,6 +143,14 @@ const ResultScreen = ({ route, navigation }) => {
                  <Text style={[styles.statLabel, { color: theme.textDim }]}>Sampling Rate</Text>
                  <Text style={[styles.statValue, { color: theme.text }]}>{typeof displayFs === 'number' ? displayFs.toFixed(1) : displayFs} Hz</Text>
               </View>
+              <View style={styles.statRow}>
+                 <Text style={[styles.statLabel, { color: theme.textDim }]}>Artifact Status</Text>
+                 {getQualityText() === 'Poor' ? (
+                   <Text style={[styles.statValue, { color: theme.error, fontSize: 14 }]}>⚠️ Artifact Detected</Text>
+                 ) : (
+                   <Text style={[styles.statValue, { color: theme.success, fontSize: 14 }]}>✅ Clean Signal</Text>
+                 )}
+              </View>
             </View>
           </View>
 
@@ -173,6 +181,15 @@ const ResultScreen = ({ route, navigation }) => {
              </View>
           </View>
         </View>
+
+        {getQualityText() === 'Poor' && (
+          <View style={{ backgroundColor: theme.error + '20', padding: 15, borderRadius: 12, marginBottom: 20, borderWidth: 1, borderColor: theme.error }}>
+            <Text style={{ color: theme.error, fontWeight: 'bold', marginBottom: 5 }}>⚠️ Artifact Detection Cause:</Text>
+            <Text style={{ color: theme.text, fontSize: 13, lineHeight: 18 }}>
+              The model detected significant noise in your signal. This is usually caused by finger movement or light leakage. Please hold your hand completely still and ensure your fingertip covers both the camera lens and the flash.
+            </Text>
+          </View>
+        )}
 
         {/* Technical Features Grid */}
         <View style={styles.featuresGrid}>
