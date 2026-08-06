@@ -65,6 +65,7 @@ This project bridges the gap between raw smartphone hardware sensors and clinica
 ### 🧠 Clinical Machine Learning Pipeline
 - **Optimized Random Forest** — Trained on the clinical [BUT-PPG database](https://physionet.org/content/but-ppg/2.0.0/).
 - **4 Feature Dimensions** — Evaluates the morphological shape (Kurtosis/Skewness), high-frequency motion artifacts (ZCR), and spectral power (SNR).
+- **Mobile Domain Calibration** — Dynamically adjusts decision boundaries using threshold calibration to adapt the strict clinical model to inherent smartphone CMOS sensor noise limitations.
 - **Dynamic SQI Score** — Returns an out-of-100 Signal Quality Index based on classification confidence probabilities.
 
 ### 🎯 Model Performance & Accuracy
@@ -76,6 +77,7 @@ This project bridges the gap between raw smartphone hardware sensors and clinica
 
 ### 📊 Premium UI/UX & Live Visualization
 - **Live SVG Rendering** — Dynamically maps the actual returned floating-point signal array to an SVG path to render the user's *true* heartbeat waveform.
+- **Dynamic Artifact Detection** — Intelligently interprets the SQI score to render conditional UI warning states, visually explaining physical artifacts (motion/light leakage) to the user.
 - **Global Theme Engine** — Instant Light/Dark mode toggling using a custom React Context provider.
 - **Custom Modals** — Replaced native alerts with beautiful, blurred-overlay modal popups for a high-end feel.
 
