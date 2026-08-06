@@ -132,6 +132,9 @@ def predict_signal_quality(signal_array, fs=30):
         }
         
     except Exception as e:
+        print(f"CRITICAL ERROR IN PREDICTION PIPELINE: {e}")
+        import traceback
+        traceback.print_exc()
         return {
             "error": str(e),
             "quality": "Unknown",
