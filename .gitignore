@@ -35,9 +35,7 @@ brno-university-of-technology-smartphone-ppg-database-but-ppg-2.0.0/
 captured_signals/
 processed_data/
 outputs/
-models/*.pkl
-models/*.h5
-models/*.keras
+# Machine Learning Models
 !models/.gitkeep
 
 # --- React Native / Node ---
