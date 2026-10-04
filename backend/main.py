@@ -31,7 +31,7 @@ class SignalPayload(BaseModel):
     signal: List[float]
     fs: float = 30.0
 
-@app.get("/")
+@app.api_route("/", methods=["GET", "HEAD"])
 def health_check():
     return {"status": "ok", "message": "PPG Signal Quality API is running."}
 
