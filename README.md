@@ -1,7 +1,6 @@
+ 🫀 PPG-Signal-Quality-Assessment
 
-# 🫀 PPG-Signal-Quality-Assessment
-
-> **Smartphone-based Photoplethysmography (PPG) signal acquisition, filtering, and quality grading using clinical Machine Learning.**
+> **Smartphone-based Photoplethysmography (PPG) signal acquisition, filtering, and quality grading using Machine Learning.**
 
 [![Frontend](https://img.shields.io/badge/Mobile-React%20Native-61DAFB)](https://reactnative.dev)
 [![Native Hardware](https://img.shields.io/badge/Hardware-Kotlin-purple)](https://kotlinlang.org/)
@@ -19,18 +18,21 @@
 - **⚙️ Live Backend API:** [https://ppg-backend-8kc7.onrender.com](https://ppg-backend-8kc7.onrender.com)
 - **🐳 Docker Image:** `cheerychuckle07/ppg-backend:latest`
 - **🧠 Training Notebooks:** [View Jupyter Notebooks](./notebooks/)
+- **👨‍💻 Portfolio:** [rajkamal08-portfolio.vercel.app](https://rajkamal08-portfolio.vercel.app/)
 
 ---
 
 ## 📱 What is this project?
 
-This project bridges the gap between raw smartphone hardware sensors and clinical-grade signal processing. A user places their finger over the smartphone camera and flash, and the app:
+This project bridges the gap between raw smartphone hardware sensors and signal processing for PPG signal quality assessment. A user places their finger over the smartphone camera and flash, and the app:
 
-1. **Extracts raw optical frames** using custom Kotlin Native Modules at ~30 FPS.
+1. **Extracts raw optical frames** using a custom Kotlin Native Module at approximately 30 FPS.
 2. **Transmits the continuous signal** to a containerized FastAPI backend via REST API.
-3. **Applies a 4th-order Butterworth bandpass filter** (0.5 - 4.0 Hz) to eliminate ambient noise and respiratory baseline wander.
-4. **Extracts 30 specific statistical features** (Kurtosis, Skewness, ZCR, SNR) and runs them through an optimized **Random Forest** model.
-5. **Returns a Signal Quality Index (SQI)** score (0-100) and plots the exact filtered heartbeat waveform live on a gorgeous Dark Mode dashboard.
+3. **Applies a 4th-order Butterworth bandpass filter** (0.5–4.0 Hz) to reduce baseline wander and high-frequency noise.
+4. **Extracts signal-quality features** including Kurtosis, Skewness, ZCR, SNR, and other engineered features.
+5. **Runs the features through a Random Forest classifier** to assess signal quality.
+6. **Returns a Signal Quality Index (SQI)**, classification, confidence, and extracted features.
+7. **Visualizes the processed PPG waveform** on the mobile application.
 
 ---
 
@@ -40,48 +42,72 @@ This project bridges the gap between raw smartphone hardware sensors and clinica
 ┌─────────────────────────────────────────────────────┐
 │               React Native Mobile App               │
 │  Home → Instructions → 10s Measurement Countdown    │
-│  Custom Kotlin Module extracts Red Channel intensity│
+│  Custom Kotlin Module extracts PPG intensity        │
 │  Smooth Animations · Custom UI · Dynamic Theming    │
 └──────────────────────┬──────────────────────────────┘
-                       │ HTTP POST (Raw Signal Array)
+                       │ HTTP POST /predict
 ┌──────────────────────▼──────────────────────────────┐
-│                FastAPI Backend API                  │
+│                 FastAPI Backend API                 │
 │  /predict → Signal Quality Assessment Pipeline      │
 └──────────────────────┬──────────────────────────────┘
                        │
 ┌──────────────────────▼──────────────────────────────┐
-│           DSP & Machine Learning Engine             │
-│  1. Butterworth Bandpass Filter (0.5Hz - 4.0Hz)     │
-│  2. Feature Extraction (SciPy/NumPy/Pandas)         │
-│  3. Random Forest Classifier (Scikit-Learn)         │
+│            DSP & Machine Learning Engine            │
+│  1. Butterworth Bandpass Filter (0.5–4.0 Hz)        │
+│  2. Feature Extraction                              │
+│  3. Feature Scaling                                 │
+│  4. Random Forest Classification                    │
 └─────────────────────────────────────────────────────┘
 ```
+
+---
+
+## 🔄 CI/CD & Deployment Architecture
+
+The backend is automatically tested, containerized, published, and deployed using GitHub Actions, Docker, Docker Hub, and Render.
+
+### CI/CD Workflow
+
+- **On Pull Request:**
+  `Checkout → Setup Python → Install Dependencies → Run Pytest → Backend Validation`
+
+- **On Push to `main`:**
+  `Run Tests → Build Docker Image → Push to Docker Hub → Trigger Render Deploy Hook → Live Backend`
+
+*Sensitive credentials (like `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`, and `RENDER_DEPLOY_HOOK`) are securely managed through GitHub Actions Secrets.*
 
 ---
 
 ## ✅ Features
 
 ### 📸 Native Hardware Integration
-- **Direct Camera Access** — Bypasses standard React Native camera limitations using a custom Kotlin bridge to extract raw frame brightness intensity.
-- **Hardware Flash Control** — Illuminates the capillary bed dynamically during the 10-second continuous scan.
+- **Direct Camera Access** — Custom Kotlin Native Module extracts raw frame intensity from the smartphone camera.
+- **Hardware Flash Control** — Smartphone flash provides illumination during PPG acquisition.
+- **10-second Measurement** — Captures a continuous PPG signal for real-time assessment.
 
-### 🧠 Clinical Machine Learning Pipeline
-- **Optimized Random Forest** — Trained on the clinical [BUT-PPG database](https://physionet.org/content/but-ppg/2.0.0/).
-- **4 Feature Dimensions** — Evaluates morphological shape (Kurtosis/Skewness), high-frequency motion artifacts (ZCR), and spectral power (SNR).
-- **Mobile Domain Calibration** — Dynamically adjusts decision boundaries to adapt the strict clinical model to inherent smartphone CMOS sensor noise limitations.
-- **Dynamic SQI Score** — Returns an out-of-100 Signal Quality Index based on classification confidence probabilities.
+### 🧠 Machine Learning Pipeline
+- **Random Forest Classifier** trained using the BUT-PPG database.
+- **Signal Quality Classification** into Good, Moderate, and Poor.
+- **Feature Engineering** using statistical and signal-processing characteristics.
+- **Signal Quality Index (SQI)** derived from model prediction confidence.
+- **Mobile Domain Calibration** to improve robustness against smartphone sensor noise.
 
-### 🎯 Model Performance & Accuracy
-- **Exceptional Accuracy** — Reliably achieves ~95% classification accuracy on hold-out validation test sets.
-- **Strategic Segmentation** — Continuous PPG streams are sliced into discrete 10-second overlapping windows for real-time mobile responsiveness.
-- **Aggressive DSP Filtering** — A strict 4th-order Butterworth bandpass filter removes respiration artifacts and ambient high-frequency noise.
-- **Expert Feature Engineering** — We extract 30 high-yield statistical features instead of relying on a black-box deep learning model, enabling extremely fast and reliable inference suitable for mobile.
+### 📊 Digital Signal Processing
+- **4th-order Butterworth bandpass filtering.**
+- **Frequency range:** 0.5–4.0 Hz.
+- **Baseline wander and high-frequency noise reduction.**
+- **PPG waveform preprocessing** and statistical feature extraction.
 
-### 📊 Premium UI/UX & Live Visualization
-- **Live SVG Rendering** — Dynamically maps the returned floating-point signal array to an SVG path, rendering the user's *true* heartbeat waveform.
-- **Dynamic Artifact Detection** — Intelligently interprets the SQI score to render conditional UI warnings, visually explaining motion or light leakage artifacts.
-- **Global Theme Engine** — Instant Light/Dark mode toggling using a custom React Context provider.
-- **Custom Modals** — Beautiful blurred-overlay modal popups replace native alerts for a high-end feel.
+### 🎯 Model Performance
+- **89.7% classification accuracy** on the current validated model.
+- **Designed for fast inference** suitable for mobile-assisted signal assessment.
+- **Uses engineered signal features** rather than an end-to-end deep learning model.
+
+### 📱 Premium UI/UX & Live Visualization
+- **Live SVG Rendering** — Dynamically renders the processed PPG waveform.
+- **Dynamic Artifact Detection** — Displays quality-related warnings based on the prediction.
+- **Global Theme Engine** — Light/Dark mode using React Context.
+- **Custom Modals** — Custom blurred-overlay modal interfaces.
 
 ---
 
@@ -89,10 +115,10 @@ This project bridges the gap between raw smartphone hardware sensors and clinica
 
 | Screen | Description |
 |--------|-------------|
-| `HomeScreen` | Application dashboard with overview and dynamic Light/Dark toggle |
-| `CameraScreen` | Measurement instructions, live countdown, and custom recording UI |
-| `AnalysisScreen` | Animated transition state showing processing and prediction steps |
-| `ResultScreen` | Final dashboard featuring the true SVG wave, SQI gauge, and metrics |
+| `HomeScreen` | Application dashboard with overview and theme controls |
+| `CameraScreen` | Measurement instructions, live countdown, and recording UI |
+| `AnalysisScreen` | Processing and prediction state |
+| `ResultScreen` | SQI, quality classification, waveform, and metrics |
 
 ---
 
@@ -108,55 +134,86 @@ GET /
 ```http
 POST /predict
 ```
-*Request:* `{ "signal": [512.3, 513.1, ...], "fs": 30.0 }`
+*Request:* `{ "signal": [512.3, 513.1, 514.2], "fs": 30.0 }`
 *Response:* `{ "quality": "Good", "sqi": 92.5, "confidence": 0.95, "features": {...} }`
 
 ---
 
-## 🐳 Docker & CI/CD Deployment
+## 🐳 Docker
 
-The FastAPI backend is fully containerized and automatically deployed using a CI/CD pipeline:
+The FastAPI backend is fully containerized using Docker.
 
-1. **GitHub Actions:** Automatically runs `pytest` and backend validation on pushes to `main`.
-2. **Docker Hub:** Builds and pushes the `cheerychuckle07/ppg-backend:latest` image.
-3. **Render:** Automatically deploys the latest container via a deployment hook.
+- **Docker Image:** `cheerychuckle07/ppg-backend:latest`
+- **Build Locally:** `docker build -t ppg-backend .`
+- **Run Locally:** 
+  ```bash
+  docker run -d --name ppg-backend-container -p 8000:8000 ppg-backend
+  ```
 
-**Run Locally via Docker:**
+*(The Docker image explicitly excludes large datasets, mobile code, and local environments via `.dockerignore` for a lightweight footprint).*
+
+---
+
+## ☁️ Deployment
+
+| Component | Platform |
+|-----------|----------|
+| **Containerization** | Docker |
+| **Container Registry** | Docker Hub |
+| **Deployment** | Render |
+| **API Framework** | FastAPI + Uvicorn |
+| **CI/CD** | GitHub Actions |
+
+**Production API:** [https://ppg-backend-8kc7.onrender.com](https://ppg-backend-8kc7.onrender.com)
+
+---
+
+## 🧪 Testing
+
+The backend uses `pytest` and FastAPI's `TestClient`. The CI pipeline automatically executes the test suite before publishing the Docker image.
+
+**Run tests locally:**
 ```bash
-docker run -d --name ppg-backend-container -p 8000:8000 cheerychuckle07/ppg-backend:latest
+python -m pytest
 ```
 
 ---
 
-## 🛠️ Local Development
+## 🚀 Local Development
 
 ### Backend
+
 ```bash
-# Clone repository
+# Clone the repository:
 git clone https://github.com/Rajkamal08/PPG-Signal-Quality-Assessment.git
 cd PPG-Signal-Quality-Assessment
 
-# Create virtual environment & install dependencies
+# Create a virtual environment:
 python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+
+# Activate it:
+venv\Scripts\activate      # Windows
+source venv/bin/activate   # Linux / macOS
+
+# Install dependencies:
 pip install -r requirements.txt
 
-# Run the FastAPI server
-cd backend
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+# Run the FastAPI server from the project root:
+uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
 ```
+The API will be available at: `http://127.0.0.1:8000`
 
 ### Mobile App
-*Note: Because this project uses custom Kotlin Native Modules, it **cannot** be run via Expo Go.*
+*Because this project uses custom Kotlin Native Modules, it cannot be run through Expo Go.*
 
 ```bash
 cd mobile
 npm install
 
-# Connect Android device via USB and forward the backend port:
+# Connect an Android device via USB and forward the backend port:
 adb reverse tcp:8000 tcp:8000
 
-# Build and run natively
+# Build and run natively:
 npx react-native run-android
 ```
 
@@ -166,46 +223,96 @@ npx react-native run-android
 
 ```text
 PPG-Signal-Quality-Assessment/
-├── .github/workflows/          # GitHub Actions CI/CD configuration
-├── backend/                    # FastAPI server & prediction endpoint
+├── .github/workflows/          # GitHub Actions CI/CD (ci.yml)
+├── backend/                    # FastAPI server
+│   ├── __init__.py
 │   └── main.py
 ├── mobile/                     # React Native application
-│   ├── android/                # Native Android code (Kotlin PPGModule)
+│   ├── android/                # Native Android/Kotlin code
 │   └── src/
 │       ├── components/         # Reusable UI components
-│       ├── context/            # ThemeProvider (Light/Dark mode)
-│       ├── screens/            # App screens (Home, Camera, etc.)
-│       └── services/           # API integration (Axios)
-├── models/                     # Trained Random Forest classifier (.pkl)
-├── notebooks/                  # Jupyter notebooks for DSP/ML pipeline
-├── src/                        # Python modules for feature extraction & preprocessing
+│       ├── context/            # Theme provider
+│       ├── screens/            # Application screens
+│       └── services/           # API integration
+├── models/                     # Trained ML models
+├── notebooks/                  # ML/DSP experiments
+├── src/                        # Signal processing modules
+│   ├── tests/                  # Backend tests (test_main.py)
+│   └── predict.py              # Prediction pipeline
+├── requirements.txt            # Development dependencies
+├── requirements-docker.txt     # Docker runtime dependencies
 ├── Dockerfile                  # Backend container definition
-└── requirements.txt            # Python dependencies
+└── .dockerignore               # Docker build exclusions
 ```
 
 ---
 
-## 🔑 Tech Stack
+## 🔬 Machine Learning Pipeline
+
+```text
+Raw PPG Signal
+       │
+       ▼
+Signal Preprocessing
+       │
+       ▼
+Butterworth Bandpass Filter
+       │
+       ▼
+Feature Extraction
+  ├── Kurtosis
+  ├── Skewness
+  ├── Zero-Crossing Rate
+  ├── Signal-to-Noise Ratio
+  └── Additional Signal Features
+       │
+       ▼
+Feature Scaling
+       │
+       ▼
+Random Forest Classifier
+       │
+       ▼
+Quality Classification
+  ├── Good
+  ├── Moderate
+  └── Poor
+       │
+       ▼
+SQI + Confidence
+```
+
+---
+
+## 🗃️ Dataset
+
+The project uses the **Brno University of Technology Smartphone PPG Database (BUT-PPG 2.0.0)** for signal processing and model development. *(Note: The dataset is not included in this repository).*
+
+---
+
+## 🛠️ Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
 | **Mobile App** | React Native 0.74 |
-| **Hardware Bridge** | Kotlin (Android Native Modules) |
+| **Hardware Bridge** | Kotlin Android Native Modules |
 | **Backend API** | Python, FastAPI, Uvicorn |
-| **Machine Learning** | Scikit-Learn (Random Forest) |
+| **Machine Learning** | Scikit-learn, Random Forest |
 | **Signal Processing** | SciPy, NumPy, Pandas |
-| **Charts & UI** | react-native-svg, LinearGradients |
-| **Container & CI/CD**| Docker, GitHub Actions, Docker Hub, Render |
+| **Visualization** | React Native SVG |
+| **Storage** | AsyncStorage |
+| **Testing** | Pytest |
+| **Container & CI/CD** | Docker, Docker Hub, GitHub Actions, Render |
 
 ---
 
-## 👨‍💻 Research & Authorship
+## 📄 Research & Authorship
 
 **PPG Signal Quality Assessment & Artifact Detection for Smartphone Monitoring**  
 *Published on TechRxiv (IEEE-supported platform), 2025.*
 
-**Raj Kamal Mehta**  
+**👨‍💻 Raj Kamal Mehta**  
 *Computer Science & Engineering | Full-Stack • React Native • Backend • Machine Learning*
 
-> *Transforming everyday smartphones into clinical-grade health monitoring tools — because the future of non-invasive cardiovascular health belongs in the palm of your hand.*
+> *Transforming everyday smartphones into accessible tools for reliable PPG signal quality assessment.*
 ```
