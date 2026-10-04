@@ -1,6 +1,4 @@
 
-
-```markdown
 # 🫀 PPG-Signal-Quality-Assessment
 
 > **Smartphone-based Photoplethysmography (PPG) signal acquisition, filtering, and quality grading using clinical Machine Learning.**
