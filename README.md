@@ -19,7 +19,6 @@
 - **⚙️ Live Backend API:** [https://ppg-backend-8kc7.onrender.com](https://ppg-backend-8kc7.onrender.com)
 - **🐳 Docker Image:** `cheerychuckle07/ppg-backend:latest`
 - **🧠 Training Notebooks:** [View Jupyter Notebooks](./notebooks/)
-- **👨‍💻 Portfolio:** [rajkamal08-portfolio.vercel.app](https://rajkamal08-portfolio.vercel.app/)
 
 ---
 
