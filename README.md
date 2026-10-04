@@ -1,10 +1,4 @@
-You can copy the entire Markdown code block below and paste it directly into the GitHub editor you linked! 
 
-It perfectly matches the highly professional design you requested, and I've integrated the **Docker** and **CI/CD** badges, the Deployment section, and the CI/CD architecture right into the layout.
-
-### Copy & Paste this into your GitHub Editor:
-
-```markdown
 # 🫀 PPG-Signal-Quality-Assessment
 
 > **Smartphone-based Photoplethysmography (PPG) signal acquisition, filtering, and quality grading using clinical Machine Learning.**
