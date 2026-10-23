@@ -29,7 +29,7 @@ This project bridges the gap between raw smartphone hardware sensors and clinica
 
 1. **Extracts raw optical frames** using custom Kotlin Native Modules at ~30 FPS.
 2. **Transmits the continuous signal** to a containerized FastAPI backend via REST API.
-3. **Applies a 4th-order Butterworth bandpass filter** (0.5 - 4.0 Hz) to eliminate ambient noise and respiratory baseline wander.
+3. **Applies a 4th-order Butterworth bandpass filter** (0.5 - 4.0 Hz) to eliminate ambient noise and respiratory  wander.
 4. **Extracts 30 specific statistical features** (Kurtosis, Skewness, ZCR, SNR) and runs them through an optimized **Random Forest** model.
 5. **Returns a Signal Quality Index (SQI)** score (0-100) and plots the exact filtered heartbeat waveform live on a gorgeous Dark Mode dashboard.
 
